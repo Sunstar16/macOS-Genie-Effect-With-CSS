@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>macOS Genie - Target Lock</title>
+    <style>
+        body {
+            background: #005a9e;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            font-family: -apple-system, sans-serif;
+        }
+
+        .window {
+            width: 450px;
+            height: 300px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.4);
+            position: relative;
+            /* ORIGIN: Anchors the animation to the bottom center of the window */
+            transform-origin: center bottom;
+            clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+            
+            transition: 
+                clip-path 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.1s, 
+                transform 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0s,
+                opacity 0.5s ease-out 0s;
+            z-index: 5;
+        }
+
+        .window.genie-minimized {
+            /* ADJUSTED: 215px hits the dock perfectly in this flex layout */
+            transform: translateY(215px) scale(0);
+            clip-path: polygon(40% 0%, 60% 0%, 50% 100%, 50% 100%);
+            opacity: 0;
+            pointer-events: none;
+
+
+        }
+
+        .title-bar {
+            height: 32px;
+            background: #e5e5e5;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+        }
+
+        .dot { 
+            width: 12px; height: 12px; border-radius: 50%; 
+            background: #ff5f56; cursor: pointer;
+        }
+
+        .dock {
+            position: absolute;
+            bottom: 20px;
+            width: 75px;
+            height: 75px;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 8px;
+            color: white;
+            font-size: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="window" id="app">
+        <div class="title-bar">
+            <div class="dot" id="closeBtn"></div>
+        </div>
+        <div style="padding: 30px;">
+            <h2 style="margin: 0; color: #222;">Target Acquired</h2>
+            <p style="color: #444;">Minimizing directly to the RESTORE button.</p>
+        </div>
+    </div>
+
+    <div class="dock" id="dockIcon">RESTORE</div>
+
+    <script>
+        const app = document.getElementById('app');
+        const closeBtn = document.getElementById('closeBtn');
+        const dock = document.getElementById('dockIcon');
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            app.classList.add('genie-minimized');
+        });
+
+        dock.addEventListener('click', () => {
+            app.classList.remove('genie-minimized');
+        });
+    </script>
+</body>
+</html>
